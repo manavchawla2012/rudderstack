@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import UserManager
 from django.db import models
@@ -5,6 +7,7 @@ from django.db import models
 from rudderstack.fields.base_model_fields import BaseModelFields
 from rudderstack.validators import Validators
 from users.apps import UsersConfig as AppConfig
+from business.models import BusinessModel
 
 
 class UserModel(BaseModelFields, AbstractBaseUser):
@@ -28,3 +31,6 @@ class UserModel(BaseModelFields, AbstractBaseUser):
     class Meta:
         managed = True
         db_table = str(AppConfig.name)
+
+    def business(self) -> Union[BusinessModel, None]:
+        return BusinessModel.objects.filter(business_owner=self.id).first()

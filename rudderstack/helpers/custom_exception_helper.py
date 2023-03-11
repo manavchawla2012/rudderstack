@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail, APIException
 from rest_framework.views import exception_handler
+from rest_framework.response import Response
 
 
 def extract_message_from_data(data: [dict, list, tuple]):
@@ -9,8 +10,10 @@ def extract_message_from_data(data: [dict, list, tuple]):
             return str(data), data.code
         case list.__qualname__ | tuple.__qualname__:
             return extract_message_from_data(data[0])
+        case str.__qualname__:
+            return data, "request_failed"
         case _:
-            return "error_not_found", "no_error"
+            return "error_not_found", "request_failed"
 
 
 def extract_message_code_from_exception(response: dict | list):
@@ -44,7 +47,7 @@ class CustomApiException(APIException):
     # create constructor
     def __init__(self, message=None, status_code=None):
         # override public fields
-        CustomApiException.status_code = status.HTTP_400_BAD_REQUEST if status_code is None else status_code
+        CustomApiException.status_code = status_code or status.HTTP_400_BAD_REQUEST
         CustomApiException.detail = message
 
 
@@ -70,3 +73,10 @@ class PGOrderCreationFailed(CustomApiException):
 
 class PGInvalidVerificationResponse(CustomApiException):
     pass
+
+
+class TokenNotFoundException(CustomApiException):
+
+    def __init__(self, *args, **kwargs):
+        kwargs["message"] = kwargs.get("message", "Token Not Found")
+        super(TokenNotFoundException, self).__init__(*args, **kwargs)

@@ -44,8 +44,7 @@ INSTALLED_APPS = [
 
     'business',
     'users',
-    #'tracking_console',
-    #'events',
+    'tracking_console',
 ]
 
 MIDDLEWARE = [

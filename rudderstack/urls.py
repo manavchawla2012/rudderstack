@@ -18,9 +18,9 @@ from django.urls import path, include
 
 from users.urls import UserBusinessUrls
 
-
 business_urls = [
     path("auth/", include((UserBusinessUrls, 'users'), namespace='')),
+    path('tracking-console/', include(('tracking_console.urls', 'tracking_console'), namespace='tracking_console')),
 ]
 
 urlpatterns = [
