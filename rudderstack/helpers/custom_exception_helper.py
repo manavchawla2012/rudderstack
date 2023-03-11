@@ -1,7 +1,6 @@
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail, APIException
 from rest_framework.views import exception_handler
-from rest_framework.response import Response
 
 
 def extract_message_from_data(data: [dict, list, tuple]):
