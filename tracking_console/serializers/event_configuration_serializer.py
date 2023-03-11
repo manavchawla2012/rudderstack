@@ -71,4 +71,4 @@ class EventConfigurationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EventConfigurationModel
-        fields = ("name", "description", "rules", "created_by", "id")
+        fields = ("name", "description", "rules", "id")
