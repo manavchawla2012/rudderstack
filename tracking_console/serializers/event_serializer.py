@@ -12,10 +12,13 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventModel
         fields = ('data', 'added_by', 'name', 'id')
-        read_only_fields = ('id', )
+        read_only_fields = ('id',)
 
-    def check_for_required_fields(self, fields: List[str], event_request: EventRequestObjectDTO) -> List[dict]:
-        diff_fields: set = set(event_request.required_fields) - set(fields)
+    def check_for_required_fields(self, data: dict, event_request: EventRequestObjectDTO) -> List[dict]:
+        diff_fields = []
+        for field in event_request.required_fields:
+            if field not in data or not data[field]:
+                diff_fields.append(field)
         errors = [{field: 'This field is required'} for field in diff_fields]
         return errors
 
@@ -28,11 +31,13 @@ class EventSerializer(serializers.ModelSerializer):
                         data[allowed_field.field_name]) else None
         return errors
 
-    def check_data_validation(self, data: dict, event_request: EventRequestObjectDTO) -> List[dict]:
-        errors = []
-        errors += self.check_for_required_fields(list(data.keys()), event_request)
-        errors += self.check_if_fields_type_is_valid(data, event_request)
-        return errors
+    def check_data_validation(self, data: dict, event_request: EventRequestObjectDTO):
+        required_field_errors = self.check_for_required_fields(data, event_request)
+        invalid_type_errors = self.check_if_fields_type_is_valid(data, event_request)
+        if required_field_errors:
+            raise serializers.ValidationError({'data': required_field_errors}, code='required_fields')
+        if invalid_type_errors:
+            raise serializers.ValidationError({'data': invalid_type_errors}, code='invalid_data_type')
 
     def validate_name(self, name) -> EventConfigurationModel:
         config = EventConfigurationModel.objects.filter(created_by=self.initial_data['added_by'], name=name).first()
@@ -44,9 +49,7 @@ class EventSerializer(serializers.ModelSerializer):
         event_config: EventConfigurationModel = attrs['name']
         attrs.pop('name')
         event_request = event_config.prepare_request_object_for_event()
-        errors = self.check_data_validation(attrs['data'], event_request)
-        if len(errors) > 0:
-            raise serializers.ValidationError({"data": errors})
+        self.check_data_validation(attrs['data'], event_request)
         attrs['event_configuration'] = event_config
         return attrs
 

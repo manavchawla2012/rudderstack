@@ -10,6 +10,10 @@ def extract_message_from_data(data: [dict, list, tuple]):
             return str(data), data.code
         case list.__qualname__ | tuple.__qualname__:
             return extract_message_from_data(data[0])
+        case dict.__qualname__:
+            if data:
+                return extract_message_from_data(data[list(data.keys())[0]])
+            return 'error_not_found', 'request_failed'
         case str.__qualname__:
             return data, "request_failed"
         case _:
