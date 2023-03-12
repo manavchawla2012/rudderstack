@@ -10,6 +10,7 @@ django-rest-knox = "*"
 django-extensions = "*"
 jinja2 = "*"
 faker = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 

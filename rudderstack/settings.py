@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 
     # rest framework
     'rest_framework',
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'rudderstack.urls'
@@ -134,12 +136,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 if DEBUG:
     import logging
+
     l = logging.getLogger('django.db.backends')
     l.setLevel(logging.DEBUG)
     l.addHandler(logging.StreamHandler())
 
 AUTH_USER_MODEL = 'users.UserModel'
-
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rudderstack.helpers.custom_exception_helper.custom_exception_handler',
@@ -147,3 +149,6 @@ REST_FRAMEWORK = {
         'rudderstack.formatter.JSONResponseFormatter.JSONResponseFormatter',
     )
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_HEADERS = ['*']
