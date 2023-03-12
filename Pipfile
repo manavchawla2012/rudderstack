@@ -9,6 +9,7 @@ psycopg2-binary = "*"
 django-rest-knox = "*"
 django-extensions = "*"
 jinja2 = "*"
+faker = "*"
 
 [dev-packages]
 
