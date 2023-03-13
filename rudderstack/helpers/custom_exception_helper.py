@@ -83,5 +83,5 @@ class TokenNotFoundException(CustomApiException):
 
     def __init__(self, *args, **kwargs):
         kwargs["message"] = kwargs.get("message", "Token Not Found")
-        #kwargs["status_code"] = HTTP_401_UNAUTHORIZED
+        kwargs["status_code"] = HTTP_401_UNAUTHORIZED
         super(TokenNotFoundException, self).__init__(*args, **kwargs)

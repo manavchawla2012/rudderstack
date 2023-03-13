@@ -6,17 +6,23 @@ from ..models import EventConfigurationTrackingPlansModel
 
 
 class TrackingPlanSerializer(serializers.ModelSerializer):
-    event_configurations = EventConfigurationSerializer(many=True, allow_null=False)
+    event_configurations = serializers.ListSerializer(child=serializers.JSONField(allow_null=False, required=True),
+                                                      allow_null=False, allow_empty=True)
 
     class Meta:
         model = TrackingPlanModel
         fields = ("name", "description", "created_by", 'event_configurations', 'id')
-        read_only_fields = ('id', )
+        read_only_fields = ('id',)
 
     def to_representation(self, instance: TrackingPlanModel):
         instance.event_configurations = [config.event_config for config in
                                          instance.eventconfigurationtrackingplansmodel_set.all()]
         return super(TrackingPlanSerializer, self).to_representation(instance)
+
+    def validate_event_configurations(self, event_configurations):
+        event_configurations = [{**config, 'created_by': self.initial_data['created_by']} for config in
+                                event_configurations]
+        return event_configurations
 
     def create(self, validated_data: dict):
         from django.db import transaction

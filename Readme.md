@@ -48,5 +48,5 @@ $ database_name: rudderstack
 To run Test cases
 (venv)$ cd project
 (venv)$ source venv/bin/activate
-(venv)$ python manage.py test
+(venv)$ python manage.py tests
 ```

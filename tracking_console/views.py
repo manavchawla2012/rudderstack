@@ -21,7 +21,7 @@ class EventConfigLCView(GetUserDataMixin, ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request, *args, **kwargs):
-        request.data["created_by"] = request.user.id
+        request.data["created_by"] = request.create.id
         return super(EventConfigLCView, self).create(request, *args, **kwargs)
 
 
@@ -32,11 +32,10 @@ class TrackingPlanLCView(GetUserDataMixin, ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request, *args, **kwargs):
-        request.data["created_by"] = request.user.id
-        request.data['event_configurations'] = [{**config, 'created_by': request.user.id} for config in
-                                                request.data.get('event_configurations', [])]
-        data = super(TrackingPlanLCView, self).create(request, *args, **kwargs)
-        return data
+        data = request.data.copy()
+        data["created_by"] = request.user.id
+        request.data.update(data)
+        return super(TrackingPlanLCView, self).create(request, *args, **kwargs)
 
 
 class TrackingPlanReadView(GetUserDataMixin, RetrieveAPIView):

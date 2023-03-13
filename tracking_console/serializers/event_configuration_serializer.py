@@ -68,7 +68,9 @@ class EventConfigurationSerializer(serializers.ModelSerializer):
                                  validators=[UniqueValidator(EventConfigurationModel.objects)])
     description = serializers.CharField(allow_null=False, allow_blank=False, required=True)
     rules = RuleSerializer(allow_null=False, required=True)
+    created_by = serializers.UUIDField(required=False)
 
     class Meta:
         model = EventConfigurationModel
         fields = ("name", "description", "rules", "id", "created_by")
+        extra_kwargs = {"created_by": {"required": False, "allow_null": True}}
