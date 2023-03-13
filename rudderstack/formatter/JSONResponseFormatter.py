@@ -7,6 +7,7 @@ class JSONResponseFormatter(JSONRenderer):
     charset = 'utf-8'
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
+        data = {} if data is None else data
         response_dict = {
             'data': data,
         } if "error" not in data else data

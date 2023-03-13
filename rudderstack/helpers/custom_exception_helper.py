@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail, APIException
 from rest_framework.views import exception_handler
+from rest_framework.status import HTTP_401_UNAUTHORIZED
 
 
 def extract_message_from_data(data: [dict, list, tuple]):
@@ -82,4 +83,5 @@ class TokenNotFoundException(CustomApiException):
 
     def __init__(self, *args, **kwargs):
         kwargs["message"] = kwargs.get("message", "Token Not Found")
+        #kwargs["status_code"] = HTTP_401_UNAUTHORIZED
         super(TokenNotFoundException, self).__init__(*args, **kwargs)

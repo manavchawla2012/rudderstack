@@ -1,4 +1,4 @@
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from rudderstack.authentication.business_authentication import BusinessAuthentication
@@ -34,9 +34,17 @@ class TrackingPlanLCView(GetUserDataMixin, ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         request.data["created_by"] = request.user.id
         request.data['event_configurations'] = [{**config, 'created_by': request.user.id} for config in
-                                                request.data['event_configurations']]
+                                                request.data.get('event_configurations', [])]
         data = super(TrackingPlanLCView, self).create(request, *args, **kwargs)
         return data
+
+
+class TrackingPlanReadView(GetUserDataMixin, RetrieveAPIView):
+    queryset = TrackingPlanModel.objects
+    serializer_class = TrackingPlanSerializer
+    authentication_classes = (BusinessAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    lookup_url_kwarg = 'id'
 
 
 class EventLCView(GetUserDataMixin, ListCreateAPIView):

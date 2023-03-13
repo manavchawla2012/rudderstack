@@ -10,7 +10,13 @@ class TrackingPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TrackingPlanModel
-        fields = ("name", "description", "created_by", 'event_configurations')
+        fields = ("name", "description", "created_by", 'event_configurations', 'id')
+        read_only_fields = ('id', )
+
+    def to_representation(self, instance: TrackingPlanModel):
+        instance.event_configurations = [config.event_config for config in
+                                         instance.eventconfigurationtrackingplansmodel_set.all()]
+        return super(TrackingPlanSerializer, self).to_representation(instance)
 
     def create(self, validated_data: dict):
         from django.db import transaction
